@@ -1,0 +1,23 @@
+{
+  "name": "agentblog",
+  "version": "1.0.0",
+  "private": true,
+  "description": "VitPress blog for GitHub Pages",
+  "scripts": {
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cq0206/agentblog.git"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cq0206/agentblog/issues"
+  },
+  "homepage": "https://cq0206.github.io/agentblog/",
+  "devDependencies": {
+    "vitepress": "^1.6.4"
+  }
+}
