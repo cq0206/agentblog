@@ -2,7 +2,7 @@
   "name": "agentblog",
   "version": "1.0.0",
   "private": true,
-  "description": "VitPress blog for GitHub Pages",
+  "description": "VitePress blog for GitHub Pages",
   "scripts": {
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",

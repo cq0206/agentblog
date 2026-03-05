@@ -2,22 +2,22 @@
 layout: home
 
 hero:
-  name: "Qian Blog"
-  text: "VitPress + GitHub Pages"
-  tagline: "记录技术、思考和生活"
+  name: "Agent 笔记博客"
+  text: "用 VitePress 持续记录 Agent 笔记"
+  tagline: "记录概念、实践与复盘，逐步构建自己的 Agent 能力树"
   actions:
     - theme: brand
-      text: 开始阅读
-      link: /posts/first-post
+      text: 查看笔记路径
+      link: /posts/roadmap
     - theme: alt
-      text: GitHub
-      link: https://github.com/cq0206/agentblog
+      text: 浏览文章
+      link: /posts/
 
 features:
-  - title: 轻量
-    details: 基于 Markdown 写作，专注内容创作。
-  - title: 快速
-    details: 使用 VitPress 构建，开发体验流畅。
-  - title: 自动部署
-    details: 每次 push 到 main 分支自动发布到 GitHub Pages。
+  - title: 笔记路径清晰
+    details: 以路线图形式拆分 Agent 笔记阶段，知道下一步做什么。
+  - title: 可复用模板
+    details: 收录提示词模板、实验记录模板、复盘模板，方便持续迭代。
+  - title: 自动化发布
+    details: 通过 GitHub Actions 自动部署到 GitHub Pages。
 ---
