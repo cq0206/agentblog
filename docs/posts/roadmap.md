@@ -28,7 +28,7 @@
 
 - 主题：What is Agent
 - 内容：Chatbot vs Agent、Agent Architecture、Claw 系统
-- 输出：`Day01-agent-basics.md`
+- 输出：[Day 1 笔记](/posts/day01-agent-basics)
 
 ### Day 2
 

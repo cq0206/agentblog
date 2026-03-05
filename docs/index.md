@@ -3,7 +3,7 @@ layout: home
 
 hero:
   name: "Agent 笔记博客"
-  text: "用 VitePress 持续记录 Agent 笔记"
+  text: "记录 Agent 笔记"
   tagline: "记录概念、实践与复盘，逐步构建自己的 Agent 能力树"
   actions:
     - theme: brand

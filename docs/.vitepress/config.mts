@@ -25,12 +25,15 @@ export default defineConfig({
           text: '笔记路径',
           items: [
             { text: 'Agent 学习 + 实战路线图', link: '/posts/roadmap' },
-            { text: 'Agent 工程师知识地图（2026）', link: '/posts/knowledge-map-2026' }
+            { text: 'Agent 工程师知识地图（2026）', link: '/posts/knowledge-map-2026' },
+            { text: 'Agent OS 内核架构图（2026）', link: '/posts/agent-os-kernel-2026' },
+            { text: 'AI Computer 架构图（2026）', link: '/posts/ai-computer-architecture-2026' }
           ]
         },
         {
           text: '学习笔记',
           items: [
+            { text: 'Day 1: What Is Agent', link: '/posts/day01-agent-basics' },
             { text: '第一篇：从 0 到 1 搭建 Agent', link: '/posts/first-post' },
             { text: '提示词模式：常用模板', link: '/posts/prompt-patterns' },
             { text: '工具调用与工作流', link: '/posts/tools-and-workflow' }

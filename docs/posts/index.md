@@ -4,9 +4,12 @@
 
 1. [Agent 学习 + 实战路线图（工程师版）](/posts/roadmap)
 2. [Agent 工程师知识地图（2026）](/posts/knowledge-map-2026)
-3. [第一篇：从 0 到 1 搭建 Agent](/posts/first-post)
-4. [提示词模式：常用模板](/posts/prompt-patterns)
-5. [工具调用与工作流](/posts/tools-and-workflow)
+3. [Agent OS 内核架构图（2026）](/posts/agent-os-kernel-2026)
+4. [AI Computer 架构图（2026）](/posts/ai-computer-architecture-2026)
+5. [Day 1: What Is Agent](/posts/day01-agent-basics)
+6. [第一篇：从 0 到 1 搭建 Agent](/posts/first-post)
+7. [提示词模式：常用模板](/posts/prompt-patterns)
+8. [工具调用与工作流](/posts/tools-and-workflow)
 
 ---
 
