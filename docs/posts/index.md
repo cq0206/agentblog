@@ -15,6 +15,7 @@
 11. [Inbox Triage Agent：Loop 与 Planner 设计](/posts/inbox-triage-agent-loop-planner)
 12. [Inbox Triage Agent：Tools、Memory 与 Validator](/posts/inbox-triage-agent-tools-memory-validator)
 13. [Inbox Triage Agent：Trace、Eval 与工程闭环](/posts/inbox-triage-agent-trace-eval)
+14. [Inbox Triage Agent：从 learn-claude-code 到 HappyCapy](/posts/inbox-triage-agent-learn-claude-code-happycapy)
 
 ---
 

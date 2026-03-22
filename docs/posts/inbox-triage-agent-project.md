@@ -8,6 +8,7 @@
 2. [Inbox Triage Agent：Loop 与 Planner 设计](/posts/inbox-triage-agent-loop-planner)
 3. [Inbox Triage Agent：Tools、Memory 与 Validator](/posts/inbox-triage-agent-tools-memory-validator)
 4. [Inbox Triage Agent：Trace、Eval 与工程闭环](/posts/inbox-triage-agent-trace-eval)
+5. [Inbox Triage Agent：从 learn-claude-code 到 HappyCapy](/posts/inbox-triage-agent-learn-claude-code-happycapy)
 
 ## 为什么要拆开
 
@@ -74,3 +75,4 @@ TECHNICAL_PLAN.md
 - [第二篇：Loop 与 Planner 设计](/posts/inbox-triage-agent-loop-planner)
 - [第三篇：Tools、Memory 与 Validator](/posts/inbox-triage-agent-tools-memory-validator)
 - [第四篇：Trace、Eval 与工程闭环](/posts/inbox-triage-agent-trace-eval)
+- [第五篇：从 learn-claude-code 到 HappyCapy](/posts/inbox-triage-agent-learn-claude-code-happycapy)
