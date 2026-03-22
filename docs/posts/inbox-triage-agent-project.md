@@ -85,6 +85,35 @@ Inbox Triage Agent 的边界很明确：
 
 我把这个项目拆成了 6 个核心件。
 
+先看整体结构：
+
+```mermaid
+flowchart TD
+    U["Inbound Ticket"] --> A["Agent Loop"]
+    A --> P["Planner"]
+    P -->|choose action| T["Tool Runner"]
+    T --> O["Order Tool"]
+    T --> C["Account Tool"]
+    T --> K["KB Tool"]
+    T --> M["Missing Fields Tool"]
+    T --> E["Escalation Tool"]
+    O --> S["Structured State"]
+    C --> S
+    K --> S
+    M --> S
+    E --> S
+    L["MEMORY.md"] --> A
+    S --> V["Validator"]
+    V --> R["Final Response"]
+    A --> X["Trace Store"]
+```
+
+这个图里最关键的点是三件事：
+
+- `Planner` 只负责决定下一步，不直接接管全部系统逻辑
+- `State` 是显式结构，不是散落在长 prompt 里的隐式状态
+- `Validator` 和 `Trace` 都在 loop 之外，负责兜底和复盘
+
 ### 1. Planner
 
 Planner 负责下一步动作选择。
@@ -175,6 +204,127 @@ Trace 的价值不是“好看”，而是出了错之后能定位到底是：
 - 升级规则不对
 - validator 没挡住
 
+## 代码层怎么落地
+
+光讲架构还不够，真正决定项目质量的是代码边界怎么切。
+
+### 1. Agent loop 要薄
+
+我最想避免的一件事，就是让主循环长成一个 300 行的状态机。
+
+所以 `agent.js` 的核心逻辑保持得非常薄：
+
+```js
+for (let step = 1; step <= 8; step += 1) {
+  const action = planNextAction(state);
+
+  if (action.type === 'state_update') {
+    state.category = action.payload.category;
+    state.urgency = action.payload.urgency;
+    state.confidence = estimateConfidence(state);
+    continue;
+  }
+
+  if (action.type === 'tool_call') {
+    const result = runTool(action, state);
+    applyToolResult(state, action, result);
+    state.confidence = estimateConfidence(state);
+    continue;
+  }
+
+  if (action.type === 'finalize') {
+    const finalResult = buildFinalResponse(state);
+    const validation = validateFinalResponse(state, finalResult);
+    return { result: finalResult, validation };
+  }
+}
+```
+
+这里有个很重要的工程判断：
+
+主循环不负责“理解业务细节”，它只负责三件事：
+
+- 让 planner 决策
+- 调用一个工具
+- 处理停止条件
+
+所有复杂性都被推到外围模块里去。
+
+### 2. Planner 只返回 action，不直接返回自由文本
+
+这个项目里，planner 的职责不是“像客服一样说话”，而是“像调度器一样决定下一步”。
+
+一个典型分支大概是这样：
+
+```js
+if (needsOrder(category) && !state.ticket.orderId && state.missingFieldRequests === 0) {
+  return {
+    type: 'tool_call',
+    tool: 'request_missing_fields',
+    input: { fields: ['orderId'] },
+    reason: 'Order-related issues require an order id before policy or status decisions.'
+  };
+}
+
+if (state.ticket.orderId && !state.facts.order) {
+  return {
+    type: 'tool_call',
+    tool: 'lookup_order',
+    input: { orderId: state.ticket.orderId },
+    reason: 'Fetch order facts before answering.'
+  };
+}
+```
+
+这个设计让 planner 的输出变成“可验证的动作对象”，而不是一段需要再解析的自然语言。
+
+如果未来把这里换成 LLM，也仍然应该要求它输出结构化 action，而不是一段任意文本。
+
+### 3. Tool Runner 必须是 allowlist
+
+工具执行层没有任何“让模型自由访问系统”的空间。
+
+我只保留了一个固定工具表：
+
+```js
+export const toolCatalog = {
+  lookup_order: 'Fetch order facts by order id.',
+  lookup_account: 'Fetch account facts by account id.',
+  search_kb: 'Search the knowledge base for an issue-specific playbook.',
+  request_missing_fields: 'Ask the user for the missing identifiers needed to continue.',
+  escalate: 'Route the ticket to a human with a structured reason.'
+};
+```
+
+这种写法的意义不是“代码看起来干净”，而是给系统边界上锁。
+
+只有工具被显式定义过，planner 才能调用；没有登记过的动作，直接拒绝执行。
+
+### 4. Validator 要做独立门禁
+
+在这个项目里，validator 不负责帮系统变聪明，只负责防止系统把不该说的话说出去。
+
+核心检查长这样：
+
+```js
+const grounded = allowedSnippets.some((snippet) => result.replyDraft.includes(snippet));
+const complete = Boolean(result.category && result.urgency && result.recommendedAction);
+
+return {
+  grounded,
+  complete,
+  ok: grounded && complete
+};
+```
+
+它当然还是一个很小的版本，但已经体现出工程上的角色分离：
+
+- planner 负责推进任务
+- response builder 负责组织输出
+- validator 负责决定能不能放行
+
+这类分层在 Agent 项目里非常重要。
+
 ## 控制循环长什么样
 
 核心 loop 并不复杂。
@@ -199,6 +349,39 @@ Read Ticket
 - 能力通过工具扩展
 - 规则通过 memory 扩展
 - 可靠性通过 validator 和 eval 保证
+
+如果把执行过程画成时序图，会更直观：
+
+```mermaid
+sequenceDiagram
+    participant User as User
+    participant Loop as Agent Loop
+    participant Planner as Planner
+    participant Tool as Tool Runner
+    participant State as State
+    participant Validator as Validator
+
+    User->>Loop: submit ticket
+    Loop->>Planner: current state + memory
+    Planner-->>Loop: next action
+    alt tool call
+        Loop->>Tool: run allowlisted tool
+        Tool-->>Loop: tool result
+        Loop->>State: update facts / flags
+        Loop->>Planner: re-plan
+    else finalize
+        Loop->>Validator: validate final response
+        Validator-->>Loop: pass / fail
+        Loop-->>User: structured result + reply draft
+    end
+```
+
+这个流程强调的是：
+
+- 每次只决策一步
+- 每次只执行一个工具
+- 每次都在显式状态上继续推进
+- 最终输出必须经过 validator
 
 ## 为什么我没有一上来就接大模型
 
@@ -326,6 +509,116 @@ Read Ticket
 
 这是一个非常小的 harness，但已经能帮你避免“瞎调 prompt”。
 
+## 我最后采用的数据结构
+
+在这种项目里，数据结构比 prompt 更值得先想清楚。
+
+我最终给 state 留的主字段大致是这样：
+
+```js
+{
+  ticket,
+  category: null,
+  urgency: null,
+  confidence: 0.55,
+  facts: {
+    order: null,
+    account: null,
+    kb: null
+  },
+  missingFieldRequests: 0,
+  lastMissingFields: [],
+  escalated: false
+}
+```
+
+这里面最重要的是 `facts` 和 `workflow flags` 分开存：
+
+- `facts` 保存查回来的客观信息
+- `missingFieldRequests`、`escalated` 这类字段保存流程状态
+
+这能减少很多“事实和流程混在一起”的混乱。
+
+## 一个真实案例是怎么跑完的
+
+比如输入这样一条 ticket：
+
+```text
+The monitor never arrived and this is blocking our launch. Order ORD-1003.
+```
+
+这个例子的典型执行路径会是：
+
+1. 分类为 `order_status`
+2. 紧急程度识别为 `high`
+3. 调用 `lookup_order(ORD-1003)`
+4. 得到结果：订单状态是 `lost`
+5. 调用 `search_kb("shipping delay")`
+6. 因为这是高优先级 VIP 场景，触发 `escalate`
+7. 输出结构化结果和人工升级结论
+
+如果把它画成更短的流程图：
+
+```mermaid
+flowchart LR
+    A["Ticket: launch blocked + ORD-1003"] --> B["Classify: order_status"]
+    B --> C["Urgency: high"]
+    C --> D["Tool: lookup_order"]
+    D --> E["Fact: order is lost"]
+    E --> F["Tool: search_kb"]
+    F --> G["Policy check"]
+    G --> H["Escalate to human"]
+```
+
+这种案例特别适合 demo，因为它同时展示了：
+
+- 工具调用
+- 状态更新
+- policy memory
+- escalation boundary
+- final response generation
+
+## Trace 应该长什么样
+
+我很建议这类项目一定要把 trace 写成结构化 JSON，而不是只打印日志。
+
+一个精简版 trace 记录大概像这样：
+
+```json
+[
+  { "kind": "memory_loaded" },
+  {
+    "kind": "planner_decision",
+    "step": 1,
+    "action": { "type": "state_update" }
+  },
+  {
+    "kind": "tool_result",
+    "step": 2,
+    "tool": "lookup_order"
+  },
+  {
+    "kind": "tool_result",
+    "step": 3,
+    "tool": "search_kb"
+  },
+  {
+    "kind": "validator",
+    "step": 4,
+    "validation": { "ok": true }
+  }
+]
+```
+
+这样做的好处是后面可以直接扩成：
+
+- 调试视图
+- replay
+- 错误聚类
+- 在线采样评测
+
+很多人把 trace 当成“排错时才打开的日志”。我更倾向于把它当作 Agent 系统的基础设施。
+
 ## 当前结果
 
 本地 demo 跑了 3 个案例：
@@ -351,6 +644,22 @@ Read Ticket
 这个小系统现在已经有了可重复验证的工程闭环。
 
 这比单纯做一个演示视频更重要。
+
+如果把“项目结构”和“评测闭环”放在一张图里看，会更容易理解为什么它适合写进简历：
+
+```mermaid
+flowchart TD
+    A["Code Changes"] --> B["Run Demo Cases"]
+    B --> C["Inspect Trace"]
+    C --> D["Run Eval Harness"]
+    D --> E["Check Metrics"]
+    E --> F["Tune Planner / Tools / Validator"]
+    F --> B
+```
+
+这张图背后的核心思想很简单：
+
+不是先追求一个“看起来很聪明”的模型输出，而是先建立一个能持续迭代的系统回路。
 
 ## 项目结构
 
@@ -379,6 +688,50 @@ TECHNICAL_PLAN.md
 - `tools.js` 负责工具边界
 - `validator.js` 负责质量门禁
 - `eval.js` 负责衡量结果
+
+## 第二版如果继续增强，我会加什么
+
+如果把这篇文章和项目继续往上推一版，我最优先补的不是更多 prompt，而是下面这些东西。
+
+### 1. 真正的 LLM Planner
+
+要求它输出严格的 JSON action：
+
+- `type`
+- `tool`
+- `input`
+- `reason`
+
+这样才能平滑替换现在的启发式 planner。
+
+### 2. 更像真实世界的 benchmark
+
+目前的数据集还是 toy 级别，下一步应该补：
+
+- 模糊描述
+- 多意图 ticket
+- 冲突事实
+- 错误 order id
+- 企业客户特殊 SLA
+
+### 3. Human-in-the-loop 页面
+
+给 reviewer 一个简单页面，能看到：
+
+- ticket 原文
+- planner 每一步决策
+- 调过哪些工具
+- 当前证据
+- 最终回复草稿
+- validator 结果
+
+### 4. 更严格的 groundedness 检查
+
+比如：
+
+- 要求回复中的关键事实必须能指向某个 tool result
+- 对“承诺退款”“承诺赔偿”做专门拦截
+- 对高风险动作做额外审批
 
 ## 如果把它升级成真正的生产版
 
