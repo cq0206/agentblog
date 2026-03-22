@@ -36,8 +36,17 @@ export default defineConfig({
             { text: 'Day 1: What Is Agent', link: '/posts/day01-agent-basics' },
             { text: '第一篇：从 0 到 1 搭建 Agent', link: '/posts/first-post' },
             { text: '提示词模式：常用模板', link: '/posts/prompt-patterns' },
-            { text: '工具调用与工作流', link: '/posts/tools-and-workflow' },
-            { text: 'Inbox Triage Agent 项目', link: '/posts/inbox-triage-agent-project' }
+            { text: '工具调用与工作流', link: '/posts/tools-and-workflow' }
+          ]
+        },
+        {
+          text: 'Inbox Triage Agent 系列',
+          items: [
+            { text: '系列总览', link: '/posts/inbox-triage-agent-project' },
+            { text: '项目总览与架构图', link: '/posts/inbox-triage-agent-overview' },
+            { text: 'Loop 与 Planner 设计', link: '/posts/inbox-triage-agent-loop-planner' },
+            { text: 'Tools、Memory 与 Validator', link: '/posts/inbox-triage-agent-tools-memory-validator' },
+            { text: 'Trace、Eval 与工程闭环', link: '/posts/inbox-triage-agent-trace-eval' }
           ]
         }
       ]
