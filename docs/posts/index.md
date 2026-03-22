@@ -10,6 +10,7 @@
 6. [第一篇：从 0 到 1 搭建 Agent](/posts/first-post)
 7. [提示词模式：常用模板](/posts/prompt-patterns)
 8. [工具调用与工作流](/posts/tools-and-workflow)
+9. [从文章到项目：做一个能写进简历的 Inbox Triage Agent](/posts/inbox-triage-agent-project)
 
 ---
 

@@ -36,7 +36,8 @@ export default defineConfig({
             { text: 'Day 1: What Is Agent', link: '/posts/day01-agent-basics' },
             { text: '第一篇：从 0 到 1 搭建 Agent', link: '/posts/first-post' },
             { text: '提示词模式：常用模板', link: '/posts/prompt-patterns' },
-            { text: '工具调用与工作流', link: '/posts/tools-and-workflow' }
+            { text: '工具调用与工作流', link: '/posts/tools-and-workflow' },
+            { text: 'Inbox Triage Agent 项目', link: '/posts/inbox-triage-agent-project' }
           ]
         }
       ]
