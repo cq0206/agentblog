@@ -47,7 +47,9 @@ export default defineConfig({
             { text: 'Loop 与 Planner 设计', link: '/posts/inbox-triage-agent-loop-planner' },
             { text: 'Tools、Memory 与 Validator', link: '/posts/inbox-triage-agent-tools-memory-validator' },
             { text: 'Trace、Eval 与工程闭环', link: '/posts/inbox-triage-agent-trace-eval' },
-            { text: '从 learn-claude-code 到 HappyCapy', link: '/posts/inbox-triage-agent-learn-claude-code-happycapy' }
+            { text: '桥接阅读入口', link: '/posts/inbox-triage-agent-learn-claude-code-happycapy' },
+            { text: 'Harness 方法论', link: '/posts/inbox-triage-agent-harness-methodology' },
+            { text: 'Agent-native 产品形态', link: '/posts/inbox-triage-agent-agent-native-product' }
           ]
         }
       ]

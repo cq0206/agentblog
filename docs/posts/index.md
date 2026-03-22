@@ -15,7 +15,9 @@
 11. [Inbox Triage Agent：Loop 与 Planner 设计](/posts/inbox-triage-agent-loop-planner)
 12. [Inbox Triage Agent：Tools、Memory 与 Validator](/posts/inbox-triage-agent-tools-memory-validator)
 13. [Inbox Triage Agent：Trace、Eval 与工程闭环](/posts/inbox-triage-agent-trace-eval)
-14. [Inbox Triage Agent：从 learn-claude-code 到 HappyCapy](/posts/inbox-triage-agent-learn-claude-code-happycapy)
+14. [Inbox Triage Agent：桥接阅读入口](/posts/inbox-triage-agent-learn-claude-code-happycapy)
+15. [Harness 方法论：从 learn-claude-code 看 Agent 工程分层](/posts/inbox-triage-agent-harness-methodology)
+16. [Agent-native 产品形态：从 HappyCapy 看运行时与工作台](/posts/inbox-triage-agent-agent-native-product)
 
 ---
 

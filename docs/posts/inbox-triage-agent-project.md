@@ -8,7 +8,9 @@
 2. [Inbox Triage Agent：Loop 与 Planner 设计](/posts/inbox-triage-agent-loop-planner)
 3. [Inbox Triage Agent：Tools、Memory 与 Validator](/posts/inbox-triage-agent-tools-memory-validator)
 4. [Inbox Triage Agent：Trace、Eval 与工程闭环](/posts/inbox-triage-agent-trace-eval)
-5. [Inbox Triage Agent：从 learn-claude-code 到 HappyCapy](/posts/inbox-triage-agent-learn-claude-code-happycapy)
+5. [Inbox Triage Agent：桥接阅读入口](/posts/inbox-triage-agent-learn-claude-code-happycapy)
+6. [Harness 方法论：从 learn-claude-code 看 Agent 工程分层](/posts/inbox-triage-agent-harness-methodology)
+7. [Agent-native 产品形态：从 HappyCapy 看运行时与工作台](/posts/inbox-triage-agent-agent-native-product)
 
 ## 为什么要拆开
 
@@ -75,4 +77,6 @@ TECHNICAL_PLAN.md
 - [第二篇：Loop 与 Planner 设计](/posts/inbox-triage-agent-loop-planner)
 - [第三篇：Tools、Memory 与 Validator](/posts/inbox-triage-agent-tools-memory-validator)
 - [第四篇：Trace、Eval 与工程闭环](/posts/inbox-triage-agent-trace-eval)
-- [第五篇：从 learn-claude-code 到 HappyCapy](/posts/inbox-triage-agent-learn-claude-code-happycapy)
+- [第五篇：桥接阅读入口](/posts/inbox-triage-agent-learn-claude-code-happycapy)
+- [第六篇：Harness 方法论](/posts/inbox-triage-agent-harness-methodology)
+- [第七篇：Agent-native 产品形态](/posts/inbox-triage-agent-agent-native-product)
